@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 207 55% 18%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 207 55% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 207 55% 18%;
+
+    --primary: 207 55% 22%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 145 50% 38%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 207 15% 46%;
+
+    --accent: 145 50% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+    --ring: 145 50% 38%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 207 55% 18%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 145 50% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 207 55% 25%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 207 40% 30%;
+    --sidebar-ring: 145 50% 38%;
+
+    /* Custom tokens */
+    --gradient-hero: linear-gradient(135deg, hsl(207 55% 18% / 0.92), hsl(207 55% 22% / 0.75));
+    --gradient-accent: linear-gradient(135deg, hsl(145 50% 38%), hsl(145 55% 32%));
+    --shadow-card: 0 4px 20px -4px hsl(207 55% 18% / 0.08);
+    --shadow-glow: 0 0 40px -10px hsl(145 50% 38% / 0.15);
+  }
+}
+
+@layer base {
+  html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    @apply bg-background text-foreground font-body antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Only apply border styling to UI elements, not all elements */
+  input,
+  button,
+  textarea,
+  select,
+  [role="combobox"],
+  [role="dialog"],
+  [role="menu"] {
+    @apply border-border;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
