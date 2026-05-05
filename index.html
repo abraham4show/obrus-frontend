@@ -21,6 +21,9 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.Stripe = function () { return { elements: () => { }, createToken: () => Promise.resolve({}) }; };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
