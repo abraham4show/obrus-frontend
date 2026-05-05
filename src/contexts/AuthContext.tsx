@@ -28,30 +28,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
+useEffect(() => {
   const fetchUser = async () => {
     try {
       const userData = await api.request('/auth/profile/');
       setUser(userData);
     } catch (error) {
       console.error('Failed to fetch user', error);
-      // If token exists but user fetch fails, clear token
-      if (localStorage.getItem('access_token')) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-      }
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
-
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    fetchUser();
-  } else {
-    // Always try to fetch user via session (handles Google OAuth)
-    fetchUser();
-  }
+  fetchUser();
 }, []);
 
 

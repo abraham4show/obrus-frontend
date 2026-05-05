@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "@/api/client";
 
 const statuses = ["received", "reviewing", "shortlisted", "interview", "rejected", "hired"];
+
 const AdminRecruitment = () => {
   const [apps, setApps] = useState<any[]>([]);
   const [selectedApp, setSelectedApp] = useState<any>(null);
