@@ -55,7 +55,8 @@ useEffect(() => {
 }, [user, authLoading, navigate]);
 
 const handleGoogleSignIn = () => {
-  window.location.href = 'https://obrus-backend.onrender.com/accounts/google/login/';
+  const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://obrus-backend.onrender.com';
+  window.location.href = `${backendUrl}/accounts/google/login/`;
 };
 
   return (
