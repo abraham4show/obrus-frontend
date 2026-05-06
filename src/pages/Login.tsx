@@ -55,7 +55,7 @@ useEffect(() => {
 }, [user, authLoading, navigate]);
 
 const handleGoogleSignIn = () => {
-  window.location.href = 'http://127.0.0.1:8000/accounts/google/login/';
+  window.location.href = 'https://obrus-backend.onrender.com/accounts/google/login/';
 };
 
   return (
