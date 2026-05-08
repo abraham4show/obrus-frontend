@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 
 const GoogleSignInButton = () => {
   const handleGoogleLogin = () => {
-    // Redirect to Django allauth Google login
-    window.location.href = "http://127.0.0.1:8000/accounts/google/login/";
+    // Use the same dynamic backend URL as Login component
+    const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://obrus-backend.onrender.com';
+    window.location.href = `${backendUrl}/accounts/google/login/`;
   };
 
   return (
