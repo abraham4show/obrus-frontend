@@ -4,14 +4,16 @@ function getCSRFToken(): string | null {
   const cookies = document.cookie.split(';');
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
-    if (name === 'csrftoken') return decodeURIComponent(value);
+    if (name === 'csrftoken') {
+      return decodeURIComponent(value);
+    }
   }
+  console.warn('CSRF token not found in cookies');
   return null;
 }
 
 export const api = {
   async request(endpoint: string, options: RequestInit = {}, isFormData = false) {
-    // Ensure endpoint starts with a slash
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const fullUrl = `${API_BASE_URL}${normalizedEndpoint}`;
     const method = options.method?.toUpperCase() || 'GET';
@@ -19,71 +21,66 @@ export const api = {
     const headers: HeadersInit = isFormData ? {} : { 'Content-Type': 'application/json' };
     if (options.headers) Object.assign(headers, options.headers);
 
-    // Add CSRF token for non-idempotent methods
+    // CRITICAL: Add CSRF header for all non-GET requests
     if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
       const csrfToken = getCSRFToken();
       if (csrfToken) {
         headers['X-CSRFToken'] = csrfToken;
+        console.debug(`Adding CSRF token to ${method} ${endpoint}`);
       } else {
-        console.warn('CSRF token not found in cookies');
+        console.error(`No CSRF token available for ${method} ${endpoint}`);
       }
     }
 
-    try {
-      const response = await fetch(fullUrl, {
-        ...options,
-        headers,
-        credentials: 'include',
-      });
+    const response = await fetch(fullUrl, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
 
-      if (response.status === 204) return null;
+    if (response.status === 204) return null;
 
-      if (!response.ok) {
-        let errorMessage = `HTTP ${response.status}`;
-        try {
-          const error = await response.json();
-          errorMessage = error.detail || error.message || errorMessage;
-        } catch {
-          // ignore JSON parsing error
-        }
-        throw new Error(errorMessage);
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        return response.json();
-      }
-      return null;
-    } catch (error) {
-      console.error(`API request failed: ${fullUrl}`, error);
-      throw error;
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        const error = await response.json();
+        errorMessage = error.detail || error.message || errorMessage;
+      } catch {}
+      throw new Error(errorMessage);
     }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    return null;
   },
 
-  // Explicitly fetch current user – used after OAuth redirect
   async getCurrentUser() {
     return this.request('/auth/profile/');
   },
 
   async login(email: string, password: string) {
-    return this.request('/auth/login/', {
+    const data = await this.request('/auth/login/', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    return data;
   },
 
   async register(userData: any) {
-    return this.request('/auth/register/', {
+    const data = await this.request('/auth/register/', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
+    return data;
   },
 
   async logout() {
     try {
       await this.request('/auth/logout/', { method: 'POST' });
     } catch (error) {
-      console.warn('Logout endpoint failed, clearing local session anyway', error);
+      console.warn('Logout error', error);
     }
   },
 
@@ -132,6 +129,6 @@ export const api = {
     return this.request('/job-applications/', {
       method: 'POST',
       body: formData,
-    }, true); // true indicates FormData
+    }, true);
   },
 };
