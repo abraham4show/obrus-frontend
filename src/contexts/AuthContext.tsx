@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { api } from '@/api/client';
+import { api, fetchCsrfToken } from '@/api/client';
 
 interface User {
   id: number;
@@ -36,6 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userData = await api.request('/auth/profile/');
       setUser(userData);
+      // After successful user fetch, ensure CSRF token is available for future POST requests
+      await fetchCsrfToken();
       return true;
     } catch (error) {
       console.error('Failed to fetch user', error);
